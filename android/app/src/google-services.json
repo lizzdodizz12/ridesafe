@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "15132845236",
+    "project_id": "ridesafe-92889",
+    "storage_bucket": "ridesafe-92889.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15132845236:android:ede579ab0eaa34feb0e3e1",
+        "android_client_info": {
+          "package_name": "com.example.ridesafe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCj6eC3ZQKz5CRsOXghyKhp89wlt8bN_DY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
