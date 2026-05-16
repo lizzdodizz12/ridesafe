@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -34,6 +36,32 @@ class EmergencyService {
   // Generate Google Maps link
   static String generateLocationLink(double latitude, double longitude) {
     return 'https://maps.google.com/?q=$latitude,$longitude';
+  }
+
+  // Publish current SOS state so nearby app users can see it
+  static Future<void> activateSOSAlert(
+    double latitude,
+    double longitude,
+  ) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      'sosActive': true,
+      'sosLocation': {'lat': latitude, 'lng': longitude},
+      'sosTimestamp': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  static Future<void> deactivateSOSAlert() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+      'sosActive': false,
+      'sosLocation': FieldValue.delete(),
+      'sosTimestamp': FieldValue.delete(),
+    }, SetOptions(merge: true));
   }
 
   // Call emergency services

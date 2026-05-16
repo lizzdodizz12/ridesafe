@@ -11,6 +11,7 @@ class EmergencySOSScreen extends StatefulWidget {
 
 class _EmergencySOSScreenState extends State<EmergencySOSScreen> {
   bool isActivated = false;
+  bool sosActive = false;
   Position? currentLocation;
   int? selectedContactIndex;
   List<EmergencyContact> emergencyContacts = [
@@ -62,6 +63,15 @@ class _EmergencySOSScreenState extends State<EmergencySOSScreen> {
         currentLocation!.longitude,
       );
 
+      await EmergencyService.activateSOSAlert(
+        currentLocation!.latitude,
+        currentLocation!.longitude,
+      );
+
+      if (mounted) {
+        setState(() => sosActive = true);
+      }
+
       _showSuccess(
         'SOS alert sent to ${contactsToNotify.length == 1 ? contactsToNotify.first.name : 'your emergency contacts'}.'
         '\n\nLocation: ${currentLocation!.latitude.toStringAsFixed(4)}, '
@@ -88,6 +98,14 @@ class _EmergencySOSScreenState extends State<EmergencySOSScreen> {
         setState(() => isActivated = false);
       }
     }
+  }
+
+  Future<void> _cancelSOS() async {
+    await EmergencyService.deactivateSOSAlert();
+    if (mounted) {
+      setState(() => sosActive = false);
+    }
+    _showSuccess('SOS alert canceled.');
   }
 
   Future<void> _call911() async {
@@ -235,6 +253,32 @@ class _EmergencySOSScreenState extends State<EmergencySOSScreen> {
             ),
 
             const SizedBox(height: 18),
+
+            if (sosActive)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  'SOS is active. Nearby community members within 3km can see your location.',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+
+            if (sosActive)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: ElevatedButton.icon(
+                  icon: const Icon(Icons.cancel),
+                  label: const Text('Cancel SOS'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[800],
+                  ),
+                  onPressed: _cancelSOS,
+                ),
+              ),
 
             Row(
               children: [
